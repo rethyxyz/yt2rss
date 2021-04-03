@@ -1,5 +1,15 @@
 # Check for args
-if [ $# -eq 0 ]; then echo ":: No link to channel(s) given"; exit 1; fi
+if [[ $# -eq 0 ]]
+then
+	echo ":: Link to channel(s) not provided"
+	exit 1
+elif [[ $@ = "-h" ]] || [[ $@ = "--help" ]]
+then
+	echo "yt2rss.sh - Fetch YouTube channel RSS feeds"
+	echo ""
+	echo "yt2rss.sh [LINK] [LINK 2] [LINK 3] ..."
+	exit 0
+fi
 
 URLS=( "$@" )
 
