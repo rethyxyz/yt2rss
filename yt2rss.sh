@@ -1,22 +1,36 @@
 # Check for args
-if [[ $# -eq 0 ]]; then
-	echo ":: Link to channel(s) not provided"
-	echo "::"
-	echo "yt2rss.sh [LINK] [LINK 2] [LINK 3] ..."
-	exit 1
-elif [[ $@ = "-h" ]] || [[ $@ = "--help" ]]; then
-	echo "yt2rss.sh - Fetch YouTube channel RSS feeds"
-	echo ""
-	echo "yt2rss.sh [LINK] [LINK 2] [LINK 3] ..."
+[ $# -eq 0 ] && { \
+	printf ":: Link to channel(s) not provided\n";
+	printf "::\n";
+    printf ":: $0 [LINK] [LINK 2] [LINK 3] ...\n";
+	exit 1; \
+}
+
+if [ $@ = "-h" ] || [ $@ = "--help" ]; then
+    printf "$0 - Convert YouTube channel link to RSS feed format.\n"
+	printf "\n"
+    printf "$0 [LINK] [LINK 2] [LINK 3] ...\n"
 	exit 0
 fi
 
-URLS=( "$@" )
+URLS=("$@")
 
-for URL in ${URLS[@]}
-do
-	CHANNEL_ID=$(curl -s "$URL" | sed -e 's/[{}]/''/g' | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | grep -m 1 'channelId' | sed -e 's/header\"\:\"c4TabbedHeaderRenderer\"\:\"channelId\"\:\"//g' -e 's/\"//g' -e 's/content\:horizontalListRenderer\:items\:\[gridChannelRenderer\:channelId\://g' -e 's/content\:expandedShelfContentsRenderer\:items\:\[channelRenderer\:channelId\://g')
-	echo "https://www.youtube.com/feeds/videos.xml?channel_id=$CHANNEL_ID"
+for URL in ${URLS[@]}; do
+    # I'm sure this sed shit could be done better, but there is not impact
+    # performance thus far, so I'll leave it alone.
+	CHANNEL_ID=$(\
+        curl -s "$URL" \
+        | sed -e 's/[{}]/''/g' \
+        | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' \
+        | grep -m 1 'channelId' \
+        | sed \
+            -e 's/header\"\:\"c4TabbedHeaderRenderer\"\:\"channelId\"\:\"//g' \
+            -e 's/\"//g' \
+            -e 's/content\:horizontalListRenderer\:items\:\[gridChannelRenderer\:channelId\://g' \
+            -e 's/content\:expandedShelfContentsRenderer\:items\:\[channelRenderer\:channelId\://g' \
+    )
+
+	printf "https://www.youtube.com/feeds/videos.xml?channel_id=$CHANNEL_ID\n"
 done
 
 exit 0

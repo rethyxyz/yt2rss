@@ -1,6 +1,6 @@
 # yt2rss
-Fetch YouTube channel RSS feeds.
+Convert YouTube channel link to RSS feed format.
 
 ## Usage
-Simply give `yt2rss.sh` URL(s) like so:
-- `./yt2rss.sh URL1 URL2 URL3 ...`
+Simply give `yt2rss` URL(s) like so: - `./yt2rss.sh URL URL2 URL3 ...`. `yt2rss` will output the link provided in RSS format.
+
